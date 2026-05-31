@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL =
-  "http://localhost:3000/api/direcciones";
+  "https://supernova-production-ff0a.up.railway.app/api/direcciones";
 
 export const obtenerDireccionesCliente =
   async (idCliente: number) => {

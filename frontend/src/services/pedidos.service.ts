@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/api/pedidos";
+const API_URL = "https://supernova-production-ff0a.up.railway.app/api/pedidos";
 
 export const crearPedido = async (
   pedido: any

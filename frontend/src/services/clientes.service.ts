@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL =
-  "http://localhost:3000/api/clientes";
+  "https://supernova-production-ff0a.up.railway.app/api/clientes";
 
 export const obtenerPerfilCliente =
   async (idUsuario: number) => {

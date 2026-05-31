@@ -20,7 +20,7 @@ const crearUsuario = async () => {
   try {
 
     await axios.post(
-      "http://localhost:3000/api/usuarios",
+      "https://supernova-production-ff0a.up.railway.app/api/usuarios",
       {
         nombre: nombre.value,
         correo: correo.value,

@@ -23,13 +23,13 @@ const producto = ref({
 const cargarDatos = async () => {
 
   const categoriasResponse = await axios.get(
-    "http://localhost:3000/api/categorias"
+    "https://supernova-production-ff0a.up.railway.app/api/categorias"
   );
 
   categorias.value = categoriasResponse.data;
 
   const marcasResponse = await axios.get(
-    "http://localhost:3000/api/marcas"
+    "https://supernova-production-ff0a.up.railway.app/api/marcas"
   );
 
   marcas.value = marcasResponse.data;
@@ -41,7 +41,7 @@ const guardarProducto = async () => {
   try {
 
     await axios.post(
-      "http://localhost:3000/api/productos",
+      "https://supernova-production-ff0a.up.railway.app/api/productos",
       producto.value
     );
 

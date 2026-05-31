@@ -127,7 +127,7 @@ onMounted(async () => {
             <div class="card producto-card h-100 border-0 shadow-sm">
 
                 <img
-                  :src="`http://localhost:3000/img/${producto.imagen}`"
+                  :src="`https://supernova-production-ff0a.up.railway.app/img/${producto.imagen}`"
                   class="card-img-top p-3"
                   style="height: 250px; object-fit: contain;"
                 >

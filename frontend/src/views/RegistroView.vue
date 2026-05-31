@@ -13,7 +13,7 @@ const registrarUsuario = async () => {
   try {
 
     await axios.post(
-      "http://localhost:3000/api/auth/register",
+      "https://supernova-production-ff0a.up.railway.app/api/auth/register",
       {
         nombre: nombre.value,
         correo: correo.value,

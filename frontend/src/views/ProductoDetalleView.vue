@@ -25,7 +25,7 @@ onMounted(async () => {
   const id = route.params.id;
 
   const response = await axios.get(
-    `http://localhost:3000/api/productos/${id}`
+    `https://supernova-production-ff0a.up.railway.app/api/productos/${id}`
   );
 
   producto.value = response.data;
@@ -50,7 +50,7 @@ onMounted(async () => {
       <div class="col-md-6">
 
         <img
-          :src="`http://localhost:3000/img/${producto.imagen}`"
+          :src="`https://supernova-production-ff0a.up.railway.app/img/${producto.imagen}`"
           class="img-fluid rounded shadow"
         >
 

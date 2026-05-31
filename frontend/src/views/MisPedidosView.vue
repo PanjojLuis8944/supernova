@@ -208,7 +208,7 @@ onMounted(() => {
 
               <td>
                 <img
-                  :src="`http://localhost:3000/img/${detalle.imagen}`"
+                  :src="`https://supernova-production-ff0a.up.railway.app/img/${detalle.imagen}`"
                   width="70"
                   class="img-thumbnail"
                 />

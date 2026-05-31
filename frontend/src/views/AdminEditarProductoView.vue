@@ -23,19 +23,19 @@ const cargarDatos = async () => {
   const id = route.params.id;
 
   const productoResponse = await axios.get(
-    `http://localhost:3000/api/productos/${id}`
+    `https://supernova-production-ff0a.up.railway.app/api/productos/${id}`
   );
 
   producto.value = productoResponse.data;
 
   const categoriasResponse = await axios.get(
-    "http://localhost:3000/api/categorias"
+    "https://supernova-production-ff0a.up.railway.app/api/categorias"
   );
 
   categorias.value = categoriasResponse.data;
 
   const marcasResponse = await axios.get(
-    "http://localhost:3000/api/marcas"
+    "https://supernova-production-ff0a.up.railway.app/api/marcas"
   );
 
   marcas.value = marcasResponse.data;
@@ -46,7 +46,7 @@ const actualizarProducto = async () => {
     const id = route.params.id;
 
     await axios.put(
-      `http://localhost:3000/api/productos/${id}`,
+      `https://supernova-production-ff0a.up.railway.app/api/productos/${id}`,
       producto.value
     );
 

@@ -7,7 +7,7 @@ const productos = ref<any[]>([]);
 const router = useRouter();
 
 const cargarProductos = async () => {
-  const response = await axios.get("http://localhost:3000/api/productos");
+  const response = await axios.get("https://supernova-production-ff0a.up.railway.app/api/productos");
   productos.value = response.data;
 };
 
@@ -18,7 +18,7 @@ const eliminarProducto = async (id: number) => {
     return;
   }
 
-  await axios.delete(`http://localhost:3000/api/productos/${id}`);
+  await axios.delete(`https://supernova-production-ff0a.up.railway.app/api/productos/${id}`);
 
   alert("Producto eliminado correctamente");
 
@@ -97,7 +97,7 @@ onMounted(() => {
               <td>
 
                 <img
-                  :src="`http://localhost:3000/img/${producto.imagen}`"
+                  :src="`https://supernova-production-ff0a.up.railway.app/img/${producto.imagen}`"
                   width="60"
                   height="45"
                   class="rounded object-fit-cover"

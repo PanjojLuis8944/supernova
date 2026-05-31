@@ -16,7 +16,7 @@ const iniciarSesion = async () => {
   try {
 
     const response = await axios.post(
-  "http://localhost:3000/api/auth/login",
+  "https://supernova-production-ff0a.up.railway.app/api/auth/login",
   {
     correo: correo.value,
     password: password.value

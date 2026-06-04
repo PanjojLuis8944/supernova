@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, computed  } from "vue";
+import { useRouter, useRoute  } from "vue-router";
+
 
 const router = useRouter();
+const route = useRoute();
 
 import {
   obtenerPedidos,
@@ -12,6 +14,19 @@ import {
 import { obtenerPagoPorPedido } from "../services/pagos.service";
 
 const pedidos = ref<any[]>([]);
+
+const pedidosFiltrados = computed(() => {
+  const estado = route.query.estado;
+
+  if (!estado) {
+    return pedidos.value;
+  }
+
+  return pedidos.value.filter(
+    (pedido: any) =>
+      pedido.id_estado_pedido === Number(estado)
+  );
+});
 
 const detallesPedido = ref<any[]>([]);
 
@@ -152,12 +167,12 @@ onMounted(() => {
         <tbody>
 
           <tr
-            v-for="pedido in pedidos"
+            v-for="pedido in pedidosFiltrados"
             :key="pedido.id_pedido"
           >
 
             <td>
-              {{ formatearFecha(pedido.fecha_pedido) }}
+              #{{ pedido.id_pedido }}
             </td>
 
             <td>

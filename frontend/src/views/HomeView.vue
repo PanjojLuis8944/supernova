@@ -3,158 +3,213 @@ import { onMounted, ref, computed } from "vue";
 
 import { obtenerProductos } from "../services/productos.service";
 import { obtenerCategorias } from "../services/categorias.service";
-
+import { agregarAlCarrito } from "../services/carrito.service";
 
 const productos = ref<any[]>([]);
-const busqueda = ref("");
 const categorias = ref<any[]>([]);
 
+const busqueda = ref("");
 const categoriaSeleccionada = ref("");
+const ordenSeleccionado = ref("");
 
 const productosFiltrados = computed(() => {
+  let resultado = productos.value.filter((producto: any) => {
+    const coincideBusqueda =
+      producto.nombre_producto
+        .toLowerCase()
+        .includes(busqueda.value.toLowerCase());
 
-  return productos.value.filter(
-    (producto: any) => {
+    const coincideCategoria =
+      categoriaSeleccionada.value === "" ||
+      producto.categoria === categoriaSeleccionada.value;
 
-      const coincideBusqueda =
-        producto.nombre_producto
-          .toLowerCase()
-          .includes(
-            busqueda.value.toLowerCase()
-          );
+    return coincideBusqueda && coincideCategoria;
+  });
 
-      const coincideCategoria =
+  if (ordenSeleccionado.value === "precio-menor") {
+    resultado.sort((a: any, b: any) =>
+      Number(a.precio) - Number(b.precio)
+    );
+  }
 
-        categoriaSeleccionada.value === ""
+  if (ordenSeleccionado.value === "precio-mayor") {
+    resultado.sort((a: any, b: any) =>
+      Number(b.precio) - Number(a.precio)
+    );
+  }
 
-        ||
+  if (ordenSeleccionado.value === "nombre") {
+    resultado.sort((a: any, b: any) =>
+      a.nombre_producto.localeCompare(b.nombre_producto)
+    );
+  }
 
-        producto.categoria ===
-        categoriaSeleccionada.value;
-
-      return (
-        coincideBusqueda &&
-        coincideCategoria
-      );
-
-    }
-  );
-
+  return resultado;
 });
 
+const seleccionarCategoria = (categoria: string) => {
+  categoriaSeleccionada.value = categoria;
+};
+
+const agregarProducto = (producto: any) => {
+  agregarAlCarrito(producto);
+  alert("Producto agregado al carrito");
+};
+
 onMounted(async () => {
-
-  productos.value =
-    await obtenerProductos();
-
-  categorias.value =
-    await obtenerCategorias();
-
+  productos.value = await obtenerProductos();
+  categorias.value = await obtenerCategorias();
 });
 </script>
 
 <template>
-  <div>
+  <div class="home-tienda">
 
-    <!-- HERO -->
-
-    <section class="bg-dark text-white py-3 mb-3">
-      <div class="container text-center">
-
-        <h1 class="display-5 fw-bold">
-          SUPERNOVA
-        </h1>
-
-        <p class="lead mt-3">
-          Tecnología de otro nivel
-        </p>
-          <div class="mt-4 mx-auto" style="max-width: 600px;">
-          <input
-            type="text"
-            class="form-control form-control-lg"
-            placeholder="Buscar productos..."
-            v-model="busqueda"
-          />
-        </div>
-        <div class="mt-3 mx-auto" style="max-width: 400px;">
-
-  <select
-    class="form-select"
-    v-model="categoriaSeleccionada"
-  >
-
-    <option value="">
-      Todas las categorías
-    </option>
-
-    <option
-      v-for="categoria in categorias"
-      :key="categoria.id_categoria"
-      :value="categoria.nombre_categoria"
-    >
-      {{ categoria.nombre_categoria }}
-    </option>
-
-  </select>
-
-</div>
-
-      </div>
-      
-    </section>
-
-    <!-- PRODUCTOS -->
-
-    <div class="container my-5">
-
-      <h2 class="mb-4">
-        Productos destacados
-      </h2>
+    <div class="container py-4">
 
       <div class="row">
 
-        <div
-          class="col-md-4 mb-4"
-          v-for="producto in productosFiltrados"
-          :key="producto.id_producto"
-        >
+        <!-- CATEGORÍAS -->
+        <div class="col-md-3">
 
-          <RouterLink
-            :to="`/producto/${producto.id_producto}`"
-            class="text-decoration-none text-dark"
-          >
+          <div class="card shadow-sm border-0 categorias-card">
+            <div class="card-header fw-bold bg-white">
+              Categorías
+            </div>
 
-            <div class="card producto-card h-100 border-0 shadow-sm">
+            <button
+              class="categoria-btn"
+              :class="{ activo: categoriaSeleccionada === '' }"
+              @click="seleccionarCategoria('')"
+            >
+              TODO
+            </button>
 
-                <img
-                  :src="`https://supernova-production-ff0a.up.railway.app/img/${producto.imagen}`"
-                  class="card-img-top p-3"
-                  style="height: 250px; object-fit: contain;"
-                >
+            <button
+              v-for="categoria in categorias"
+              :key="categoria.id_categoria"
+              class="categoria-btn"
+              :class="{ activo: categoriaSeleccionada === categoria.nombre_categoria }"
+              @click="seleccionarCategoria(categoria.nombre_categoria)"
+            >
+              {{ categoria.nombre_categoria }}
+            </button>
+          </div>
 
-              <div class="card-body">
+        </div>
 
-                <span class="badge bg-dark mb-2">
-                  {{ producto.categoria }}
-                </span>
+        <!-- PRODUCTOS -->
+        <div class="col-md-9">
 
-                <h5 class="card-title">
-                  {{ producto.nombre_producto }}
-                </h5>
+          <div class="d-flex justify-content-between align-items-center mb-3">
 
-                <p class="card-text text-muted">
-                  {{ producto.descripcion }}
-                </p>
+            <strong>
+              {{ productosFiltrados.length }} artículos encontrados
+            </strong>
 
-                <h4 class="text-primary fw-bold">
-                  Q {{ producto.precio }}
-                </h4>
+            <div class="d-flex gap-2">
+
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Buscar..."
+                v-model="busqueda"
+              />
+
+              <select
+                class="form-select"
+                v-model="ordenSeleccionado"
+              >
+                <option value="">
+                  Ordenar por
+                </option>
+
+                <option value="precio-menor">
+                  Precios más bajos
+                </option>
+
+                <option value="precio-mayor">
+                  Precios más altos
+                </option>
+
+                <option value="nombre">
+                  Nombre A-Z
+                </option>
+              </select>
+
+            </div>
+
+          </div>
+
+          <hr />
+
+          <div class="row g-4">
+
+            <div
+              class="col-md-4"
+              v-for="producto in productosFiltrados"
+              :key="producto.id_producto"
+            >
+
+              <div class="card producto-card h-100">
+
+                <div class="producto-img-container">
+                  <img
+                    :src="`https://supernova-production-ff0a.up.railway.app/img/${producto.imagen}`"
+                    class="producto-img"
+                  />
+                </div>
+
+                <div class="card-body d-flex flex-column">
+
+                  <h5 class="precio">
+                    Q {{ Number(producto.precio).toFixed(2) }}
+                  </h5>
+
+                  <p class="nombre-producto">
+                    {{ producto.nombre_producto }}
+                  </p>
+
+                  <p class="text-muted descripcion">
+                    {{ producto.descripcion }}
+                  </p>
+
+                  <div class="mt-auto d-flex justify-content-between">
+
+                    <button
+                      class="btn btn-success btn-sm"
+                      @click="agregarProducto(producto)"
+                    >
+                      Agregar
+                    </button>
+
+                    <RouterLink
+                      :to="`/producto/${producto.id_producto}`"
+                      class="btn btn-primary btn-sm"
+                    >
+                      Detalles
+                    </RouterLink>
+
+                  </div>
+
+                </div>
 
               </div>
 
             </div>
 
-          </RouterLink>
+          </div>
+
+          <div
+            v-if="productosFiltrados.length === 0"
+            class="text-center text-muted py-5"
+          >
+            <i class="bi bi-search display-4"></i>
+
+            <h4 class="mt-3">
+              No se encontraron productos
+            </h4>
+          </div>
 
         </div>
 
@@ -166,13 +221,79 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+.home-tienda {
+  background: #f5f6f8;
+  min-height: 100vh;
+}
+
+.categorias-card {
+  position: sticky;
+  top: 20px;
+}
+
+.categoria-btn {
+  width: 100%;
+  border: none;
+  background: white;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.categoria-btn:hover {
+  background: #f1f5f9;
+}
+
+.categoria-btn.activo {
+  background: #0d6efd;
+  color: white;
+  font-weight: bold;
+}
 
 .producto-card {
-  transition: transform 0.3s ease;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: white;
 }
 
 .producto-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
 }
 
+.producto-img-container {
+  height: 210px;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.producto-img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  padding: 15px;
+}
+
+.precio {
+  font-size: 18px;
+  color: #212529;
+  margin-bottom: 6px;
+}
+
+.nombre-producto {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.descripcion {
+  font-size: 13px;
+  min-height: 38px;
+}
 </style>
